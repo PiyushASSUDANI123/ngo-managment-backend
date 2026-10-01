@@ -3,6 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 // Load env vars
@@ -14,9 +16,20 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(helmet({ crossOriginResourcePolicy: false })); // Basic security headers (allowing cross-origin for now)
+app.use(cors()); // Left untouched as requested
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Global Rate Limiting (Prevents DDoS & Write Spam)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // Limit each IP to 200 requests per windowMs
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', apiLimiter);
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads', 'volunteers');

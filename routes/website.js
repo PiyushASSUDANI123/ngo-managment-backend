@@ -3,6 +3,9 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
+
 const WebsiteApplication = require('../models/WebsiteApplication');
 const WebsiteReview = require('../models/WebsiteReview');
 const GalleryImage = require('../models/GalleryImage');
@@ -49,6 +52,7 @@ router.post('/applications', async (req, res) => {
 router.post('/reviews', async (req, res) => {
   try {
     const review = await WebsiteReview.create(req.body);
+    cache.del('public-reviews'); // Invalidate cache so new review appears immediately
     res.status(201).json({ message: 'Review submitted successfully', review });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -57,7 +61,11 @@ router.post('/reviews', async (req, res) => {
 
 router.get('/public-reviews', async (req, res) => {
   try {
+    const cachedReviews = cache.get('public-reviews');
+    if (cachedReviews) return res.json({ reviews: cachedReviews });
+
     const reviews = await WebsiteReview.find({ status: 'Approved' }).sort('-createdAt').limit(10);
+    cache.set('public-reviews', reviews);
     res.json({ reviews });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -66,7 +74,11 @@ router.get('/public-reviews', async (req, res) => {
 
 router.get('/public-gallery', async (req, res) => {
   try {
+    const cachedGallery = cache.get('public-gallery');
+    if (cachedGallery) return res.json({ images: cachedGallery });
+
     const images = await GalleryImage.find({ isActive: true }).sort('-createdAt');
+    cache.set('public-gallery', images);
     res.json({ images });
   } catch (error) {
     res.status(500).json({ message: error.message });

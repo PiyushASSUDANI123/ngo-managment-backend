@@ -5,7 +5,7 @@ const websiteReviewSchema = new mongoose.Schema({
   review: { type: String, required: true },
   rating: { type: Number, required: true, min: 1, max: 5 },
   role: { type: String, enum: ['Donor', 'Volunteer', 'Supporter', 'Parent', 'Student', 'Other'], default: 'Supporter' },
-  status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' }
+  status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Approved' }
 }, {
   timestamps: true
 });

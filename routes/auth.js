@@ -4,13 +4,22 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const Volunteer = require('../models/Volunteer');
 const { protect } = require('../middleware/auth');
+const rateLimit = require('express-rate-limit');
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 5, // Limit each IP to 5 login requests per 15 minutes
+  message: { message: 'Too many login attempts from this IP, please try again after 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
 // ──────────────── Admin Login ────────────────
-router.post('/admin/login', async (req, res) => {
+router.post('/admin/login', loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -41,7 +50,7 @@ router.post('/admin/login', async (req, res) => {
 });
 
 // ──────────────── Volunteer Login ────────────────
-router.post('/volunteer/login', async (req, res) => {
+router.post('/volunteer/login', loginLimiter, async (req, res) => {
   try {
     const { volunteerId, password } = req.body;
 

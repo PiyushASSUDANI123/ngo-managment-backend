@@ -5,6 +5,9 @@ const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const connectDB = require('./config/db');
 
 // Load env vars
@@ -30,6 +33,15 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 app.use('/api', apiLimiter);
+
+// Data Sanitization against NoSQL Injection
+app.use(mongoSanitize());
+
+// Data Sanitization against XSS
+app.use(xss());
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads', 'volunteers');

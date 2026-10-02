@@ -40,7 +40,8 @@ router.post('/intent', upload.single('screenshot'), async (req, res) => {
       donorName: donorName || 'Anonymous', // Fallback for progressive flow
       email, phone, address, city, state, amount: amount || 0, status: status || 'initiated',
       utrNumber: utrNumber || '',
-      screenshot: screenshotUrl
+      screenshot: screenshotUrl,
+      source: 'Website'
     });
     res.status(201).json({ donation });
   } catch (error) {
@@ -51,7 +52,7 @@ router.post('/intent', upload.single('screenshot'), async (req, res) => {
 // ──────────────── Public: Update Donation Intent ────────────────
 router.put('/intent/:id', upload.single('screenshot'), async (req, res) => {
   try {
-    const updateData = { ...req.body };
+    const updateData = { ...req.body, source: 'Website' };
     if (req.file) updateData.screenshot = `/uploads/donations/${req.file.filename}`;
 
     const donation = await Donation.findByIdAndUpdate(
@@ -127,7 +128,9 @@ router.post('/', protect, adminOnly, async (req, res) => {
       amount,
       date: date ? new Date(date) : new Date(),
       purpose,
-      notes
+      notes,
+      status: 'completed',
+      source: 'Manual'
     });
 
     res.status(201).json(donation);

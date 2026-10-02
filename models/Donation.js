@@ -13,7 +13,8 @@ const donationSchema = new mongoose.Schema({
   notes: { type: String, trim: true, default: '' },
   utrNumber: { type: String, trim: true, default: '' },
   screenshot: { type: String, trim: true, default: '' },
-  status: { type: String, enum: ['initiated', 'partial', 'completed'], default: 'initiated' }
+  status: { type: String, enum: ['initiated', 'partial', 'pending', 'completed'], default: 'initiated' },
+  source: { type: String, enum: ['Website', 'Manual'], default: 'Manual' }
 }, { timestamps: true });
 
 donationSchema.index({ date: -1 });

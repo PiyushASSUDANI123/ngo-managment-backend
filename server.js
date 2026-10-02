@@ -68,6 +68,7 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/points-categories', require('./routes/pointsCategories'));
 app.use('/api/meetings', require('./routes/meetings'));
 app.use('/api/website', require('./routes/website'));
+app.use('/api/shoutouts', require('./routes/shoutouts'));
 
 // Health check
 app.get('/api/health', (req, res) => {

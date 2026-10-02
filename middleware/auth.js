@@ -27,6 +27,9 @@ const protect = async (req, res, next) => {
       if (!volunteer) {
         return res.status(401).json({ message: 'Volunteer not found' });
       }
+      if (volunteer.status === 'inactive') {
+        return res.status(401).json({ message: 'Your account has been suspended. Please contact the administrator.' });
+      }
       req.user = { ...volunteer.toObject(), role: 'volunteer' };
     } else {
       return res.status(401).json({ message: 'Invalid token role' });

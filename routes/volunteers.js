@@ -55,7 +55,8 @@ router.get('/', protect, adminOnly, async (req, res) => {
     const volunteers = await Volunteer.find(filter)
       .populate('field')
       .select('-password')
-      .sort('-createdAt');
+      .sort('-createdAt')
+      .lean();
 
     res.json(volunteers);
   } catch (error) {
@@ -68,7 +69,8 @@ router.get('/:id', protect, async (req, res) => {
   try {
     const volunteer = await Volunteer.findById(req.params.id)
       .populate('field')
-      .select('-password');
+      .select('-password')
+      .lean();
 
     if (!volunteer) {
       return res.status(404).json({ message: 'Volunteer not found' });

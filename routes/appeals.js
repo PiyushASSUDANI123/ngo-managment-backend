@@ -18,7 +18,8 @@ router.get('/', protect, async (req, res) => {
 
     const appeals = await Appeal.find(filter)
       .populate('volunteer', 'name volunteerId')
-      .sort('-createdAt');
+      .sort('-createdAt')
+      .lean();
 
     res.json(appeals);
   } catch (error) {

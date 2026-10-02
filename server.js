@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
@@ -20,6 +21,7 @@ const app = express();
 
 // Middleware
 app.use(helmet({ crossOriginResourcePolicy: false })); // Basic security headers (allowing cross-origin for now)
+app.use(compression()); // Gzip compression
 app.use(cors()); // Left untouched as requested
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

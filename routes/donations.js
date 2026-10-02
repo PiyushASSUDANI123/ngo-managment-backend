@@ -24,7 +24,7 @@ router.get('/', protect, adminOnly, async (req, res) => {
       ];
     }
 
-    const donations = await Donation.find(filter).sort('-date');
+    const donations = await Donation.find(filter).sort('-date').lean();
     const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);
 
     res.json({ donations, totalAmount });
@@ -36,7 +36,7 @@ router.get('/', protect, adminOnly, async (req, res) => {
 // ──────────────── Get Single Donation ────────────────
 router.get('/:id', protect, adminOnly, async (req, res) => {
   try {
-    const donation = await Donation.findById(req.params.id);
+    const donation = await Donation.findById(req.params.id).lean();
     if (!donation) {
       return res.status(404).json({ message: 'Donation not found' });
     }

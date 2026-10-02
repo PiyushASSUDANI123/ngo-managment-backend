@@ -20,7 +20,8 @@ router.get('/', protect, async (req, res) => {
 
     const tasks = await Task.find(filter)
       .populate('volunteer', 'name volunteerId')
-      .sort('-createdAt');
+      .sort('-createdAt')
+      .lean();
 
     res.json(tasks);
   } catch (error) {

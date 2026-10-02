@@ -27,7 +27,8 @@ router.get('/', protect, async (req, res) => {
     const points = await Points.find(filter)
       .populate('volunteer', 'name volunteerId')
       .populate('category', 'name')
-      .sort('-date');
+      .sort('-date')
+      .lean();
 
     res.json(points);
   } catch (error) {

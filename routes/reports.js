@@ -73,7 +73,8 @@ router.get('/', protect, adminOnly, async (req, res) => {
     const reports = await DailyReport.find(filter)
       .populate('volunteer', 'name volunteerId')
       .populate('category', 'name defaultPoints')
-      .sort('-createdAt');
+      .sort('-createdAt')
+      .lean();
 
     res.json(reports);
   } catch (error) {
@@ -90,7 +91,8 @@ router.get('/my-reports', protect, async (req, res) => {
 
     const reports = await DailyReport.find({ volunteer: req.user._id })
       .populate('category', 'name defaultPoints')
-      .sort('-createdAt');
+      .sort('-createdAt')
+      .lean();
 
     res.json(reports);
   } catch (error) {

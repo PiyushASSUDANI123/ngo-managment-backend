@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const Shoutout = require('../models/Shoutout');
-const { protect, admin } = require('../middleware/auth');
+const { protect, adminOnly } = require('../middleware/auth');
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -37,7 +37,7 @@ router.get('/:slug', async (req, res) => {
 });
 
 // Create shoutout (Admin only)
-router.post('/', protect, admin, upload.single('image'), async (req, res) => {
+router.post('/', protect, adminOnly, upload.single('image'), async (req, res) => {
   try {
     const { donorName, amount, message } = req.body;
     let slug = donorName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.floor(Math.random() * 10000);
@@ -58,7 +58,7 @@ router.post('/', protect, admin, upload.single('image'), async (req, res) => {
 });
 
 // Delete shoutout (Admin only)
-router.delete('/:id', protect, admin, async (req, res) => {
+router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
     await Shoutout.findByIdAndDelete(req.params.id);
     res.json({ message: 'Shoutout deleted' });

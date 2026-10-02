@@ -40,46 +40,46 @@ function generateCertificate(donation, res) {
   doc.fontSize(48)
      .font('Times-Bold')
      .fillColor('#001f3f')
-     .text('CERTIFICATE', 0, 180, { align: 'center', characterSpacing: 4 });
+     .text('CERTIFICATE', 0, 220, { align: 'center', characterSpacing: 4 });
 
   // "OF" with lines
   doc.fontSize(16)
      .font('Times-Roman')
      .fillColor('#c5a059')
-     .text('OF', 0, 240, { align: 'center', characterSpacing: 2 });
+     .text('OF', 0, 280, { align: 'center', characterSpacing: 2 });
      
   const ofWidth = doc.widthOfString('O F'); 
-  doc.moveTo(centerX - 100, 248)
-     .lineTo(centerX - ofWidth/2 - 10, 248)
+  doc.moveTo(centerX - 100, 288)
+     .lineTo(centerX - ofWidth/2 - 10, 288)
      .lineWidth(1)
      .stroke('#c5a059');
-  doc.moveTo(centerX + ofWidth/2 + 10, 248)
-     .lineTo(centerX + 100, 248)
+  doc.moveTo(centerX + ofWidth/2 + 10, 288)
+     .lineTo(centerX + 100, 288)
      .lineWidth(1)
      .stroke('#c5a059');
 
   doc.fontSize(24)
      .font('Times-Roman')
      .fillColor('#001f3f')
-     .text('APPRECIATION', 0, 270, { align: 'center', characterSpacing: 6 });
+     .text('APPRECIATION', 0, 310, { align: 'center', characterSpacing: 6 });
 
   // ── Presented to text ──
   doc.fontSize(16)
      .font('Times-Roman')
      .fillColor('#333333')
-     .text('This certificate is proudly presented to', 0, 330, { align: 'center' });
+     .text('This certificate is proudly presented to', 0, 370, { align: 'center' });
 
   // ── Donor Name ──
   const name = donation.donorName ? donation.donorName.toUpperCase() : 'PIYUSH';
   doc.fontSize(46)
      .font('Times-Bold')
      .fillColor('#b8860b')
-     .text(name, 0, 360, { align: 'center' });
+     .text(name, 0, 400, { align: 'center' });
 
   // ── Diamond separator ──
   doc.save();
   doc.fillColor('#c5a059');
-  doc.translate(centerX, 430);
+  doc.translate(centerX, 470);
   doc.rotate(45);
   doc.rect(-4, -4, 8, 8).fill();
   doc.restore();
@@ -90,7 +90,7 @@ function generateCertificate(donation, res) {
      .fillColor('#444444')
      .text(
        'In profound recognition of your outstanding contribution and unwavering commitment to the EnVision Foundation. Your generosity and selfless dedication play a pivotal role in our mission of "Learning Beyond Books", enabling us to educate, empower, and nurture the hidden creativity of underprivileged children. We deeply value your invaluable support in driving meaningful change.',
-       80, 470, { width: pageWidth - 160, align: 'center', lineGap: 8 }
+       80, 510, { width: pageWidth - 160, align: 'center', lineGap: 8 }
      );
 
   // ── Awarded on ──
@@ -121,21 +121,15 @@ function generateCertificate(donation, res) {
 
   // ── Footer quote ──
   const quoteY = 740;
-  
-  doc.moveTo(centerX - 170, quoteY)
-     .lineTo(centerX - 170, quoteY + 35)
-     .lineWidth(2)
-     .stroke('#c5a059');
 
   doc.fontSize(12)
      .font('Times-Italic')
      .fillColor('#555555')
-     .text('"The best way to find yourself is to lose yourself', centerX - 155, quoteY, { width: 310, align: 'center' })
-     .text('in the service of others."', { align: 'center' });
+     .text('"They alone live, who live for others; the rest are more dead than alive."', 0, quoteY, { align: 'center' });
      
   doc.fontSize(11)
      .font('Times-Roman')
-     .text('— Mahatma Gandhi', centerX - 155, doc.y + 5, { width: 310, align: 'center' });
+     .text('— Swami Vivekananda', 0, doc.y + 5, { align: 'center' });
 
   // ── Developer Credits ──
   doc.fontSize(9)

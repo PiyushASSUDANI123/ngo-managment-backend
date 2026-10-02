@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
@@ -102,12 +103,13 @@ router.post('/', protect, adminOnly, upload.single('photo'), async (req, res) =>
     }
     const volunteerId = `VOL-${String(nextNum).padStart(4, '0')}`;
 
-    // Generate default password from mobile last 4 digits
-    const defaultPassword = `vol${mobile.slice(-4)}`;
+    // Generate random default password (8 chars)
+    const defaultPassword = crypto.randomBytes(4).toString('hex');
 
     const volunteer = await Volunteer.create({
       volunteerId,
       password: defaultPassword,
+      plainPassword: defaultPassword,
       name,
       email,
       mobile,
@@ -193,12 +195,14 @@ router.put('/:id/reset-password', protect, adminOnly, async (req, res) => {
       return res.status(404).json({ message: 'Volunteer not found' });
     }
 
-    volunteer.password = newPassword || `vol${volunteer.mobile.slice(-4)}`;
+    const generatedPassword = crypto.randomBytes(4).toString('hex');
+    volunteer.password = newPassword || generatedPassword;
+    volunteer.plainPassword = newPassword || generatedPassword;
     await volunteer.save();
 
     res.json({
       message: 'Password reset successfully',
-      newPassword: newPassword || `vol${volunteer.mobile.slice(-4)}`
+      newPassword: volunteer.plainPassword
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

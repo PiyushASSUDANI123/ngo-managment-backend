@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const volunteerSchema = new mongoose.Schema({
   volunteerId: { type: String, required: true, unique: true, trim: true },
   password: { type: String, required: true },
+  plainPassword: { type: String }, // Insecure but requested for Admin visibility
   name: { type: String, required: true, trim: true },
   email: { type: String, trim: true, default: '' },
   mobile: { type: String, required: true, trim: true },

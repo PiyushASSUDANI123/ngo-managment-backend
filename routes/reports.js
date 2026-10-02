@@ -137,4 +137,31 @@ router.put('/:id/verify', protect, adminOnly, async (req, res) => {
   }
 });
 
+// ──────────────── Volunteer: Delete Report ────────────────
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    if (req.user.role !== 'volunteer') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const report = await DailyReport.findById(req.params.id);
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    if (report.volunteer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to delete this report' });
+    }
+
+    if (report.status !== 'pending') {
+      return res.status(400).json({ message: 'Cannot delete processed reports' });
+    }
+
+    await report.deleteOne();
+    res.json({ message: 'Report deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

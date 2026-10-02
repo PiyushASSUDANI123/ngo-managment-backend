@@ -32,17 +32,34 @@ router.get('/', protect, async (req, res) => {
 // ──────────────── Create Task ────────────────
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
-    const { volunteer, title, description, dueDate } = req.body;
+    const { volunteer, title, description, dueDate, notes } = req.body;
 
     if (!volunteer || !title) {
       return res.status(400).json({ message: 'Volunteer and title are required' });
+    }
+
+    if (volunteer === 'all') {
+      const Volunteer = require('../models/Volunteer');
+      const allVolunteers = await Volunteer.find({ status: 'active' });
+      
+      const tasksToCreate = allVolunteers.map(vol => ({
+        volunteer: vol._id,
+        title,
+        description,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        notes: notes || ''
+      }));
+
+      await Task.insertMany(tasksToCreate);
+      return res.status(201).json({ message: 'Tasks assigned to all active volunteers' });
     }
 
     const task = await Task.create({
       volunteer,
       title,
       description,
-      dueDate: dueDate ? new Date(dueDate) : null
+      dueDate: dueDate ? new Date(dueDate) : null,
+      notes: notes || ''
     });
 
     const populated = await Task.findById(task._id)

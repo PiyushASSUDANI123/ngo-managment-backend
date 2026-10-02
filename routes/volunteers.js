@@ -103,7 +103,8 @@ router.post('/', protect, adminOnly, upload.single('photo'), async (req, res) =>
       const lastNum = parseInt(lastVolunteer.volunteerId.split('-')[1]) || 0;
       nextNum = lastNum + 1;
     }
-    const volunteerId = `VOL-${String(nextNum).padStart(4, '0')}`;
+    const firstName = name.split(' ')[0].toUpperCase().replace(/[^A-Z]/g, '');
+    const volunteerId = `${firstName}-${String(nextNum).padStart(3, '0')}`;
 
     // Generate random default password (8 chars)
     const defaultPassword = crypto.randomBytes(4).toString('hex');
@@ -133,6 +134,36 @@ router.post('/', protect, adminOnly, upload.single('photo'), async (req, res) =>
         password: defaultPassword
       }
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ──────────────── Volunteer Update Own Profile ────────────────
+router.put('/profile/me', protect, upload.single('photo'), async (req, res) => {
+  try {
+    if (req.user.role !== 'volunteer') return res.status(403).json({ message: 'Access denied' });
+
+    const updates = { ...req.body };
+    // Disallowed fields for self-update
+    delete updates.password; 
+    delete updates.plainPassword;
+    delete updates.volunteerId; 
+    delete updates.status;
+    delete updates.field;
+    delete updates.joinDate;
+
+    if (req.file) {
+      updates.photo = `/uploads/volunteers/${req.file.filename}`;
+    }
+
+    const volunteer = await Volunteer.findByIdAndUpdate(
+      req.user._id,
+      updates,
+      { new: true, runValidators: true }
+    ).populate('field').select('-password');
+
+    res.json(volunteer);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

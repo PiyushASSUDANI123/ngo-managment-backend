@@ -11,6 +11,8 @@ const donationSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   purpose: { type: String, trim: true, default: '' },
   notes: { type: String, trim: true, default: '' },
+  utrNumber: { type: String, trim: true, default: '' },
+  screenshot: { type: String, trim: true, default: '' },
   status: { type: String, enum: ['initiated', 'partial', 'completed'], default: 'initiated' }
 }, { timestamps: true });
 

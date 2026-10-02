@@ -3,8 +3,70 @@ const router = express.Router();
 const Donation = require('../models/Donation');
 const generateCertificate = require('../utils/generateCertificate');
 const { protect, adminOnly } = require('../middleware/auth');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-// ──────────────── Get All Donations ────────────────
+// ──────────────── Multer Configuration ────────────────
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, '../uploads/donations');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, `donation-${uniqueSuffix}${path.extname(file.originalname)}`);
+  }
+});
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Only images are allowed'));
+  }
+});
+
+// ──────────────── Public: Create Donation Intent ────────────────
+router.post('/intent', upload.single('screenshot'), async (req, res) => {
+  try {
+    const { donorName, email, phone, address, city, state, amount, status, utrNumber } = req.body;
+    let screenshotUrl = '';
+    if (req.file) screenshotUrl = `/uploads/donations/${req.file.filename}`;
+    
+    const donation = await Donation.create({
+      donorName: donorName || 'Anonymous', // Fallback for progressive flow
+      email, phone, address, city, state, amount: amount || 0, status: status || 'initiated',
+      utrNumber: utrNumber || '',
+      screenshot: screenshotUrl
+    });
+    res.status(201).json({ donation });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ──────────────── Public: Update Donation Intent ────────────────
+router.put('/intent/:id', upload.single('screenshot'), async (req, res) => {
+  try {
+    const updateData = { ...req.body };
+    if (req.file) updateData.screenshot = `/uploads/donations/${req.file.filename}`;
+
+    const donation = await Donation.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+    if (!donation) return res.status(404).json({ message: 'Donation not found' });
+    res.json({ donation });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ──────────────── Admin: Get All Donations ────────────────
 router.get('/', protect, adminOnly, async (req, res) => {
   try {
     const { startDate, endDate, search } = req.query;

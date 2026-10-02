@@ -10,4 +10,8 @@ const dailyReportSchema = new mongoose.Schema({
   pointsAwarded: { type: Number, default: 0 }
 }, { timestamps: true });
 
+// ──────────────── Indexes for Performance ────────────────
+dailyReportSchema.index({ volunteer: 1, createdAt: -1 }); // Fast lookups for volunteer's own reports
+dailyReportSchema.index({ status: 1, createdAt: -1 }); // Used by admin to quickly find pending/approved reports
+
 module.exports = mongoose.model('DailyReport', dailyReportSchema);

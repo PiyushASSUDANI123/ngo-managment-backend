@@ -10,4 +10,6 @@ const meetingSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
+meetingSchema.index({ date: -1 });
+
 module.exports = mongoose.model('Meeting', meetingSchema);

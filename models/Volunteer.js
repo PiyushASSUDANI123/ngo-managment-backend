@@ -27,4 +27,9 @@ volunteerSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// ──────────────── Indexes for Performance ────────────────
+volunteerSchema.index({ field: 1, status: 1 }); // Used for admin volunteer filters
+volunteerSchema.index({ name: 'text' }); // Used for text search (though regex is used, this helps generic text queries)
+volunteerSchema.index({ createdAt: -1 }); // Used for sorting
+
 module.exports = mongoose.model('Volunteer', volunteerSchema);

@@ -119,41 +119,6 @@ function generateCertificate(donation, res) {
      .fillColor('#b8860b')
      .text(dateStr, 0, dateY + 20, { align: 'center' });
 
-  // ── Signature section ──
-  const sigY = 670;
-
-  // Left signature (President)
-  doc.moveTo(80, sigY)
-     .lineTo(240, sigY)
-     .lineWidth(1)
-     .stroke('#333333');
-
-  doc.fontSize(13)
-     .font('Times-Bold')
-     .fillColor('#333333')
-     .text('President', 80, sigY + 8, { width: 160, align: 'center' });
-
-  doc.fontSize(11)
-     .font('Times-Roman')
-     .fillColor('#555555')
-     .text('EnVision Foundation', 80, sigY + 24, { width: 160, align: 'center' });
-
-  // Right signature
-  doc.moveTo(pageWidth - 240, sigY)
-     .lineTo(pageWidth - 80, sigY)
-     .lineWidth(1)
-     .stroke('#333333');
-
-  doc.fontSize(13)
-     .font('Times-Bold')
-     .fillColor('#333333')
-     .text('Authorized Signatory', pageWidth - 240, sigY + 8, { width: 160, align: 'center' });
-
-  doc.fontSize(11)
-     .font('Times-Roman')
-     .fillColor('#555555')
-     .text('EnVision Foundation', pageWidth - 240, sigY + 24, { width: 160, align: 'center' });
-
   // ── Footer quote ──
   const quoteY = 740;
   

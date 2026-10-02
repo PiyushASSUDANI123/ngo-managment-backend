@@ -94,7 +94,7 @@ function generateCertificate(donation, res) {
      );
 
   // ── Awarded on ──
-  const dateY = 580;
+  const dateY = doc.y + 35;
   doc.moveTo(centerX - 50, dateY + 8)
      .lineTo(centerX - 100, dateY + 8)
      .lineWidth(1)

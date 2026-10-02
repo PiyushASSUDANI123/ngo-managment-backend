@@ -126,6 +126,9 @@ router.put('/change-password', protect, async (req, res) => {
     }
 
     user.password = newPassword;
+    if (req.user.role === 'volunteer') {
+      user.plainPassword = newPassword;
+    }
     await user.save();
 
     res.json({ message: 'Password changed successfully' });

@@ -12,7 +12,8 @@ const websiteApplicationSchema = new mongoose.Schema({
   reference: { type: String },
   status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' }
 }, {
-  timestamps: true
+  timestamps: true,
+  strict: false
 });
 
 module.exports = mongoose.model('WebsiteApplication', websiteApplicationSchema);

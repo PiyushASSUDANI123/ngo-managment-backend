@@ -10,6 +10,7 @@ const WebsiteApplication = require('../models/WebsiteApplication');
 const WebsiteReview = require('../models/WebsiteReview');
 const GalleryImage = require('../models/GalleryImage');
 const Donation = require('../models/Donation');
+const VolunteerPageConfig = require('../models/VolunteerPageConfig');
 const { protect, adminOnly } = require('../middleware/auth');
 
 // ── Multer config for gallery uploads ──
@@ -39,6 +40,18 @@ const upload = multer({
 });
 
 // ──────────────── PUBLIC ENDPOINTS ────────────────
+
+router.get('/volunteer-config', async (req, res) => {
+  try {
+    let config = await VolunteerPageConfig.findOne();
+    if (!config) {
+      config = await VolunteerPageConfig.create({});
+    }
+    res.json(config);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 router.post('/applications', async (req, res) => {
   try {
@@ -111,6 +124,21 @@ router.put('/donations/intent/:id', async (req, res) => {
 });
 
 // ──────────────── ADMIN ENDPOINTS ────────────────
+
+router.put('/volunteer-config', protect, adminOnly, async (req, res) => {
+  try {
+    let config = await VolunteerPageConfig.findOne();
+    if (!config) {
+      config = new VolunteerPageConfig(req.body);
+    } else {
+      Object.assign(config, req.body);
+    }
+    await config.save();
+    res.json(config);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 router.get('/applications', protect, adminOnly, async (req, res) => {
   try {

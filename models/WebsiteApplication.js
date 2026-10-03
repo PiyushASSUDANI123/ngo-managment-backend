@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 const websiteApplicationSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  class: { type: String, required: true },
-  school: { type: String, required: true },
-  location: { type: String, required: true },
-  department: { type: String, required: true },
-  reason: { type: String, required: true },
-  contact: { type: String, required: true },
+  name: { type: String },
+  class: { type: String },
+  school: { type: String },
+  location: { type: String },
+  department: { type: String },
+  reason: { type: String },
+  contact: { type: String },
   experienceLink: { type: String },
   reference: { type: String },
   status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' }
